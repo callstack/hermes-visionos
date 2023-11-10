@@ -57,6 +57,26 @@ if(HERMES_APPLE_TARGET_PLATFORM MATCHES "catalyst")
   set(THREADS_PREFER_PTHREAD_FLAG ON)
 endif()
 
+# Workaround for a bug in CMake  which passes wrong flag
+macro(__xros_unset_target lang)
+unset(CMAKE_${lang}_OSX_DEPLOYMENT_TARGET_FLAG)
+endmacro()
+
+if(HERMES_APPLE_TARGET_PLATFORM MATCHES "xr")
+  __xros_unset_target(ASM)
+  __xros_unset_target(C)
+  __xros_unset_target(CXX)
+  __xros_unset_target(OBJC)
+  __xros_unset_target(OBJCXX)
+endif()
+
+if(HERMES_APPLE_TARGET_PLATFORM MATCHES "xrsimulator")
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-target arm64-apple-xros1.0-simulator")
+endif()
+if(HERMES_APPLE_TARGET_PLATFORM MATCHES "xros")
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-target arm64-apple-xros1.0")
+endif()
+
 # This must be consistent with the release_version in:
 # - android/build.gradle
 # - npm/package.json
